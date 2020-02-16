@@ -11,6 +11,7 @@ let _enabled = false;
 let input;
 let _textSize;
 let _textColor;
+let _fontFamily;
 
 /**
  * Handle document.mouseup event
@@ -31,6 +32,7 @@ function handleDocumentMouseup(e) {
   input.style.top = `${e.clientY}px`;
   input.style.left = `${e.clientX}px`;
   input.style.fontSize = `${_textSize}px`;
+  input.style.fontFamily = _fontFamily;
 
   input.addEventListener('blur', handleInputBlur);
   input.addEventListener('keyup', handleInputKeyup);
@@ -84,7 +86,8 @@ function saveText() {
         content: input.value.trim(),
         x: pt[0],
         y: pt[1],
-        rotation: -viewport.rotation
+        rotation: -viewport.rotation,
+        fontFamily: _fontFamily
     }
 
     PDFJSAnnotate.getStoreAdapter().addAnnotation(documentId, pageNumber, annotation)
@@ -114,9 +117,10 @@ function closeInput() {
  * @param {Number} textSize The size of the text
  * @param {String} textColor The color of the text
  */
-export function setText(textSize = 12, textColor = '000000') {
+export function setText(textSize = 12, textColor = '000000', fontFamily = '"Times New Roman", Times, serif') {
   _textSize = parseInt(textSize, 10);
   _textColor = textColor;
+  _fontFamily = fontFamily;
 }
 
 

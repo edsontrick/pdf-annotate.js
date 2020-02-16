@@ -21,7 +21,8 @@ export default function renderText(a) {
     y: y,
     fill: normalizeColor(a.color || '#000'),
     fontSize: a.size,
-    transform: `rotate(${a.rotation}, ${x}, ${y})`
+    transform: `rotate(${a.rotation}, ${x}, ${y})`,
+    fontFamily: a.fontFamily
   });
   text.innerHTML = a.content;
 
