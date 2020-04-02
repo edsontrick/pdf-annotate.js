@@ -34,7 +34,8 @@ function handleDocumentMouseup(e) {
   input.style.fontSize = `${_textSize}px`;
   input.style.fontFamily = _fontFamily;
 
-  input.addEventListener('blur', handleInputBlur);
+  // input.addEventListener('blur', handleInputBlur);
+  input.addEventListener('saving', handleInputBlur);
   input.addEventListener('keyup', handleInputKeyup);
 
   document.body.appendChild(input);
