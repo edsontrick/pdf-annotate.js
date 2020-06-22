@@ -9,6 +9,10 @@ import {
 
 let _enabled = false;
 let input;
+let originY;
+let originX;
+let svg;
+let rect;
 let _textSize;
 let _textColor;
 let _fontFamily;
@@ -19,9 +23,13 @@ let _fontFamily;
  * @param {Event} e The DOM event to handle
  */
 function handleDocumentMouseup(e) {
-  if (input || !findSVGAtPoint(e.clientX, e.clientY)) {
+  if (input || !(svg = findSVGAtPoint(e.clientX, e.clientY))) {
     return;
   }
+
+  rect = svg.getBoundingClientRect();
+  originY = e.clientY;
+  originX = e.clientX;
 
   input = document.createElement('input');
   input.setAttribute('id', 'pdf-annotate-text-input');
@@ -29,8 +37,8 @@ function handleDocumentMouseup(e) {
   input.style.border = `3px solid ${BORDER_COLOR}`;
   input.style.borderRadius = '3px';
   input.style.position = 'absolute';
-  input.style.top = `${e.clientY}px`;
-  input.style.left = `${e.clientX}px`;
+  input.style.top = `${originY - rect.top}px`;
+  input.style.left = `${originX - rect.left}px`;
   input.style.fontSize = `${_textSize}px`;
   input.style.fontFamily = _fontFamily;
 
@@ -38,7 +46,8 @@ function handleDocumentMouseup(e) {
   input.addEventListener('saving', handleInputBlur);
   input.addEventListener('keyup', handleInputKeyup);
 
-  document.body.appendChild(input);
+  // document.body.appendChild(input);
+  svg.parentNode.appendChild(input);
   input.focus();
 }
 
@@ -67,16 +76,16 @@ function handleInputKeyup(e) {
  */
 function saveText() {
   if (input.value.trim().length > 0) {
-    let clientX = parseInt(input.style.left, 10);
-    let clientY = parseInt(input.style.top, 10);
-    let svg = findSVGAtPoint(clientX, clientY);
+    let clientX = parseInt(originX, 10);
+    let clientY = parseInt(originY, 10);
+    // let svg = findSVGAtPoint(clientX, clientY);
     if (!svg) {
       return;
     }
     let height = _textSize;
     let { documentId, pageNumber, viewport } = getMetadata(svg);
     let scale = 1 / viewport.scale;
-    let rect = svg.getBoundingClientRect();
+    // let rect = svg.getBoundingClientRect();
     let pt = convertToSvgPoint([
       clientX - rect.left, 
       clientY -  rect.top + height], svg, viewport);
@@ -90,6 +99,7 @@ function saveText() {
         rotation: -viewport.rotation,
         fontFamily: _fontFamily
     }
+    console.log(pageNumber);
 
     PDFJSAnnotate.getStoreAdapter().addAnnotation(documentId, pageNumber, annotation)
       .then((annotation) => {
@@ -104,10 +114,13 @@ function saveText() {
  * Close the input
  */
 function closeInput() {
+  // let svg = findSVGAtPoint(originX, originY);
   if (input) {
     input.removeEventListener('blur', handleInputBlur);
     input.removeEventListener('keyup', handleInputKeyup);
-    document.body.removeChild(input);
+    // document.body.removeChild(input);
+    svg.parentNode.removeChild(input);
+
     input = null;
   }
 }
