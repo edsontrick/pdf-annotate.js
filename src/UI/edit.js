@@ -65,9 +65,17 @@ function createEditOverlay(target) {
   anchor.style.right = '-13px';
   anchor.style.width = '25px';
   anchor.style.height = '25px';
-  
+
   overlay.appendChild(anchor);
   parentNode.appendChild(overlay);
+
+  let svg = overlay.parentNode.querySelector(config.annotationSvgQuery());
+  let { documentId } = getMetadata(svg);
+  PDFJSAnnotate.getStoreAdapter().getAnnotation(documentId, id).then((annotation) => {
+    if (annotation.type === "textbox" && annotation.hash_uuid == "true")
+      destroyEditOverlay();
+  });
+
   document.addEventListener('click', handleDocumentClick);
   document.addEventListener('keyup', handleDocumentKeyup);
   document.addEventListener('mousedown', handleDocumentMousedown);

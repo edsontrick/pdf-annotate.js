@@ -99,7 +99,6 @@ function saveText() {
         rotation: -viewport.rotation,
         fontFamily: _fontFamily
     }
-    console.log(pageNumber);
 
     PDFJSAnnotate.getStoreAdapter().addAnnotation(documentId, pageNumber, annotation)
       .then((annotation) => {
