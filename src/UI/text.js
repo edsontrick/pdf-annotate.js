@@ -8,7 +8,9 @@ import {
 } from './utils';
 
 let _enabled = false;
+let divWrapper;
 let input;
+let button;
 let originY;
 let originX;
 let svg;
@@ -31,23 +33,42 @@ function handleDocumentMouseup(e) {
   originY = e.clientY;
   originX = e.clientX;
 
+  divWrapper = document.createElement('div');
+  divWrapper.style.position = 'absolute';
+  divWrapper.style.top = `${originY - rect.top}px`;
+  divWrapper.style.left = `${originX - rect.left}px`;
+  divWrapper.style.width = '226px';
+
   input = document.createElement('input');
   input.setAttribute('id', 'pdf-annotate-text-input');
   input.setAttribute('placeholder', 'Enter text');
   input.style.border = `3px solid ${BORDER_COLOR}`;
   input.style.borderRadius = '3px';
   input.style.position = 'absolute';
-  input.style.top = `${originY - rect.top}px`;
-  input.style.left = `${originX - rect.left}px`;
+  input.style.top = 0;
+  input.style.left = 0;
   input.style.fontSize = `${_textSize}px`;
   input.style.fontFamily = _fontFamily;
+
+  button = document.createElement('button');
+  button.setAttribute('id', 'pdf-annotate-text-button');
+  button.style.position = 'absolute';
+  button.style.right = 0;
+  button.style.background = '#4caf50';
+  button.style.color = 'white';
+  button.style.border = 'none';
+  button.style.padding = '9px 10px';
+  button.addEventListener('click', handleInputBlur);
+  button.innerHTML = "OK"; 
 
   // input.addEventListener('blur', handleInputBlur);
   input.addEventListener('saving', handleInputBlur);
   input.addEventListener('keyup', handleInputKeyup);
 
+  divWrapper.appendChild(input);
+  divWrapper.appendChild(button);
   // document.body.appendChild(input);
-  svg.parentNode.appendChild(input);
+  svg.parentNode.appendChild(divWrapper);
   input.focus();
 }
 
@@ -118,7 +139,7 @@ function closeInput() {
     input.removeEventListener('blur', handleInputBlur);
     input.removeEventListener('keyup', handleInputKeyup);
     // document.body.removeChild(input);
-    svg.parentNode.removeChild(input);
+    svg.parentNode.removeChild(divWrapper);
 
     input = null;
   }

@@ -183,9 +183,10 @@ export function enablePen() {
   document.addEventListener('mousedown', handleDocumentMousedown);
   document.addEventListener('keyup', handleDocumentKeyup);
   document.addEventListener('touchstart', handleTouchStart, false);
-  $('#content-wrapper').css('overflow-y', 'hidden');
-  $('#content-wrapper').css('overflow-x', 'hidden');
-  $('#content-wrapper').css('-webkit-overflow-scrolling', 'none');
+  let content_wrapper = document.getElementById('content-wrapper');
+  content_wrapper.style.overflowY = 'hidden';
+  content_wrapper.style.overflowx = 'hidden';
+  content_wrapper.style.WebkitOverflowScrolling = 'none';
   disableUserSelect();
 }
 
@@ -199,9 +200,10 @@ export function disablePen() {
   document.removeEventListener('mousedown', handleDocumentMousedown);
   document.removeEventListener('keyup', handleDocumentKeyup);
   document.removeEventListener('touchstart', handleTouchStart);
-  $('#content-wrapper').css('overflow-y', 'scroll');
-  $('#content-wrapper').css('overflow-x', 'scroll');
-  $('#content-wrapper').css('-webkit-overflow-scrolling', 'touch');
+  let content_wrapper = document.getElementById('content-wrapper');
+  content_wrapper.style.overflowY = 'scroll';
+  content_wrapper.style.overflowx = 'scroll';
+  content_wrapper.style.WebkitOverflowScrolling = 'touch';
   enableUserSelect();
 }
 
