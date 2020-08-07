@@ -32,6 +32,7 @@ function createEditOverlay(target) {
 
   overlay = document.createElement('div');
   let anchor = document.createElement('a');
+  let button = document.createElement('button');
   let parentNode = findSVGContainer(target).parentNode;
   let id = target.getAttribute('data-pdf-annotate-id');
   let rect = getOffsetAnnotationRect(target);
@@ -49,6 +50,7 @@ function createEditOverlay(target) {
   overlay.style.border = `${OVERLAY_BORDER_SIZE}px solid ${BORDER_COLOR}`;
   overlay.style.borderRadius = `${OVERLAY_BORDER_SIZE}px`;
   overlay.style.zIndex = 20100;
+  overlay.style.cursor = 'move';
 
   anchor.innerHTML = '×';
   anchor.setAttribute('href', 'javascript://');
@@ -65,8 +67,20 @@ function createEditOverlay(target) {
   anchor.style.right = '-13px';
   anchor.style.width = '25px';
   anchor.style.height = '25px';
+  anchor.style.lineHeight = '17px';
+
+  button.setAttribute('id', 'pdf-annotate-text-button');
+  button.style.position = 'absolute';
+  button.style.right = '-46px';
+  button.style.top = '15px';
+  button.style.background = '#4caf50';
+  button.style.color = 'white';
+  button.style.border = 'none';
+  button.style.padding = '2px 10px';
+  button.innerHTML = "OK";
 
   overlay.appendChild(anchor);
+  overlay.appendChild(button);
   parentNode.appendChild(overlay);
 
   let svg = overlay.parentNode.querySelector(config.annotationSvgQuery());
@@ -93,9 +107,9 @@ function createEditOverlay(target) {
   overlay.addEventListener('mouseover', () => {
     if (!isDragging) { anchor.style.display = ''; }
   });
-  overlay.addEventListener('mouseout', () => {
+  /* overlay.addEventListener('mouseout', () => {
     anchor.style.display = 'none';
-  });
+  }); */
 }
 
 /**
@@ -330,7 +344,7 @@ function handleDocumentMouseup(e) {
   }, 0);
 
   overlay.style.background = '';
-  overlay.style.cursor = '';
+  // overlay.style.cursor = '';
 
   document.removeEventListener('mousemove', handleDocumentMousemove);
   document.removeEventListener('mouseup', handleDocumentMouseup);

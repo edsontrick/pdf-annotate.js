@@ -25,6 +25,8 @@ let _fontFamily;
  * @param {Event} e The DOM event to handle
  */
 function handleDocumentMouseup(e) {
+  let anchor = document.createElement('a');
+
   if (input || !(svg = findSVGAtPoint(e.clientX, e.clientY))) {
     return;
   }
@@ -37,7 +39,7 @@ function handleDocumentMouseup(e) {
   divWrapper.style.position = 'absolute';
   divWrapper.style.top = `${originY - rect.top}px`;
   divWrapper.style.left = `${originX - rect.left}px`;
-  divWrapper.style.width = '226px';
+  divWrapper.style.width = '210px';
 
   input = document.createElement('input');
   input.setAttribute('id', 'pdf-annotate-text-input');
@@ -49,24 +51,56 @@ function handleDocumentMouseup(e) {
   input.style.left = 0;
   input.style.fontSize = `${_textSize}px`;
   input.style.fontFamily = _fontFamily;
+  input.style.width = '100%';
+  input.readOnly = 'true';
 
   button = document.createElement('button');
   button.setAttribute('id', 'pdf-annotate-text-button');
   button.style.position = 'absolute';
-  button.style.right = 0;
+  button.style.right = '-42px';
+  button.style.top = '13px';
   button.style.background = '#4caf50';
   button.style.color = 'white';
   button.style.border = 'none';
-  button.style.padding = '9px 10px';
+  button.style.padding = '2px 10px';
   button.addEventListener('click', handleInputBlur);
-  button.innerHTML = "OK"; 
+  button.innerHTML = "OK";
+
+  anchor.innerHTML = '×';
+  anchor.setAttribute('href', 'javascript://');
+  anchor.style.background = '#fff';
+  anchor.style.borderRadius = '20px';
+  anchor.style.border = '1px solid #bbb';
+  anchor.style.color = '#bbb';
+  anchor.style.fontSize = '16px';
+  anchor.style.padding = '2px';
+  anchor.style.textAlign = 'center';
+  anchor.style.textDecoration = 'none';
+  anchor.style.position = 'absolute';
+  anchor.style.top = '-15px';
+  anchor.style.right = '-10px';
+  anchor.style.width = '25px';
+  anchor.style.height = '25px';
+  anchor.style.lineHeight = '17px';
 
   // input.addEventListener('blur', handleInputBlur);
   input.addEventListener('saving', handleInputBlur);
   input.addEventListener('keyup', handleInputKeyup);
+  anchor.addEventListener('click', closeInput);
+  anchor.addEventListener('mouseover', () => {
+    anchor.style.color = '#35A4DC';
+    anchor.style.borderColor = '#999';
+    anchor.style.boxShadow = '0 1px 1px #ccc';
+  });
+  anchor.addEventListener('mouseout', () => {
+    anchor.style.color = '#bbb';
+    anchor.style.borderColor = '#bbb';
+    anchor.style.boxShadow = '';
+  });
 
   divWrapper.appendChild(input);
   divWrapper.appendChild(button);
+  divWrapper.appendChild(anchor);
   // document.body.appendChild(input);
   svg.parentNode.appendChild(divWrapper);
   input.focus();
@@ -96,6 +130,10 @@ function handleInputKeyup(e) {
  * Save a text annotation from input
  */
 function saveText() {
+  let textButton = document.querySelector("button.text.active");
+  let textButtonSignTYpe;
+  if (textButton)
+    textButtonSignTYpe = textButton.getAttribute('data-sign-type');
   if (input.value.trim().length > 0) {
     let clientX = parseInt(originX, 10);
     let clientY = parseInt(originY, 10);
@@ -118,7 +156,8 @@ function saveText() {
         x: pt[0],
         y: pt[1],
         rotation: -viewport.rotation,
-        fontFamily: _fontFamily
+        fontFamily: _fontFamily,
+        signType: textButtonSignTYpe
     }
 
     PDFJSAnnotate.getStoreAdapter().addAnnotation(documentId, pageNumber, annotation)
