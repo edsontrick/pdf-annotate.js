@@ -37,8 +37,6 @@ function handleDocumentMouseup(e) {
 
   divWrapper = document.createElement('div');
   divWrapper.style.position = 'absolute';
-  divWrapper.style.top = `${originY - rect.top}px`;
-  divWrapper.style.left = `${originX - rect.left}px`;
   divWrapper.style.width = '210px';
 
   input = document.createElement('input');
@@ -97,13 +95,21 @@ function handleDocumentMouseup(e) {
     anchor.style.borderColor = '#bbb';
     anchor.style.boxShadow = '';
   });
+  input.addEventListener('change', function(){
+    let maxY = rect.height - 40;
+    let maxX = rect.width - parseInt(divWrapper.style.width);
+    let positionY = originY - rect.top;
+    let positionX = originX - rect.left;
+    divWrapper.style.top = `${positionY >= maxY ? maxY : positionY}px`;
+    divWrapper.style.left = `${positionX >= maxX ? maxX : positionX}px`;
+  });
 
   divWrapper.appendChild(input);
   divWrapper.appendChild(button);
   divWrapper.appendChild(anchor);
   // document.body.appendChild(input);
   svg.parentNode.appendChild(divWrapper);
-  input.focus();
+  // input.focus();
 }
 
 /**
@@ -146,8 +152,8 @@ function saveText() {
     let scale = 1 / viewport.scale;
     // let rect = svg.getBoundingClientRect();
     let pt = convertToSvgPoint([
-      clientX - rect.left, 
-      clientY -  rect.top + height], svg, viewport);
+      parseInt(divWrapper.style.left), 
+      parseInt(divWrapper.style.top) + height], svg, viewport);
     let annotation = {
         type: 'textbox',
         size: _textSize * scale,
