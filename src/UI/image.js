@@ -10,14 +10,12 @@ import {
 let _enabled = false;
 let divWrapper;
 let input;
+let imageSrc;
 let button;
 let originY;
 let originX;
 let svg;
 let rect;
-let _textSize;
-let _textColor;
-let _fontFamily;
 
 /**
  * Handle document.mouseup event
@@ -39,16 +37,16 @@ function handleDocumentMouseup(e) {
   divWrapper.style.position = 'absolute';
   divWrapper.style.width = '210px';
 
-  input = document.createElement('input');
-  input.setAttribute('id', 'pdf-annotate-text-input');
-  input.setAttribute('placeholder', 'Enter text');
+  imageSrc = document.querySelector('button.image.active').dataset.imageSrc;
+
+  input = document.createElement('img');
+  input.setAttribute('id', 'pdf-annotate-image');
+  input.setAttribute('src', imageSrc);
   input.style.border = `3px solid ${BORDER_COLOR}`;
   input.style.borderRadius = '3px';
   input.style.position = 'absolute';
   input.style.top = 0;
   input.style.left = 0;
-  input.style.fontSize = `${_textSize}px`;
-  input.style.fontFamily = _fontFamily;
   input.style.width = '100%';
   input.readOnly = 'true';
 
@@ -109,8 +107,7 @@ function handleDocumentMouseup(e) {
   divWrapper.appendChild(anchor);
   // document.body.appendChild(input);
   svg.parentNode.appendChild(divWrapper);
-  // document.getElementById('pdf-annotate-text-input').value = 'Patrick Edson';
-  // document.getElementById('pdf-annotate-text-input').dispatchEvent(new Event('change'));
+  document.getElementById('pdf-annotate-image').dispatchEvent(new Event('change'));
   // input.focus();
 }
 
@@ -138,41 +135,26 @@ function handleInputKeyup(e) {
  * Save a text annotation from input
  */
 function saveText() {
-  let textButton = document.querySelector("button.text.active");
-  let textButtonSignTYpe;
-  if (textButton)
-    textButtonSignTYpe = textButton.getAttribute('data-sign-type');
-  if (input.value.trim().length > 0) {
-    let clientX = parseInt(originX, 10);
-    let clientY = parseInt(originY, 10);
-    // let svg = findSVGAtPoint(clientX, clientY);
-    if (!svg) {
-      return;
-    }
-    let height = _textSize;
-    let { documentId, pageNumber, viewport } = getMetadata(svg);
-    let scale = 1 / viewport.scale;
-    // let rect = svg.getBoundingClientRect();
-    let pt = convertToSvgPoint([
-      parseInt(divWrapper.style.left), 
-      parseInt(divWrapper.style.top) + height], svg, viewport);
-    let annotation = {
-        type: 'textbox',
-        size: _textSize * scale,
-        color: _textColor,
-        content: input.value.trim(),
-        x: pt[0],
-        y: pt[1],
-        rotation: -viewport.rotation,
-        fontFamily: _fontFamily,
-        signType: textButtonSignTYpe
-    }
-
-    PDFJSAnnotate.getStoreAdapter().addAnnotation(documentId, pageNumber, annotation)
-      .then((annotation) => {
-        appendChild(svg, annotation);
-      });
+  if (!svg) {
+    return;
   }
+  let { documentId, pageNumber, viewport } = getMetadata(svg);
+  let pt = convertToSvgPoint([
+    parseInt(divWrapper.style.left), 
+    parseInt(divWrapper.style.top)], svg, viewport);
+  let annotation = {
+    type: 'image',
+    x: pt[0],
+    y: pt[1],
+    rotation: -viewport.rotation,
+    src: imageSrc,
+    height: '80px'
+  }
+
+  PDFJSAnnotate.getStoreAdapter().addAnnotation(documentId, pageNumber, annotation)
+    .then((annotation) => {
+      appendChild(svg, annotation);
+    });
   
   closeInput();
 }
@@ -193,22 +175,9 @@ function closeInput() {
 }
 
 /**
- * Set the text attributes
- *
- * @param {Number} textSize The size of the text
- * @param {String} textColor The color of the text
- */
-export function setText(textSize = 12, textColor = '000000', fontFamily = '"Times New Roman", Times, serif') {
-  _textSize = parseInt(textSize, 10);
-  _textColor = textColor;
-  _fontFamily = fontFamily;
-}
-
-
-/**
  * Enable text behavior
  */
-export function enableText() {
+export function enableImage() {
   if (_enabled) { return; }
 
   _enabled = true;
@@ -219,7 +188,7 @@ export function enableText() {
 /**
  * Disable text behavior
  */
-export function disableText() {
+export function disableImage() {
   if (!_enabled) { return; }
 
   _enabled = false;

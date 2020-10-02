@@ -258,7 +258,7 @@ function handleDocumentMouseup(e) {
       attribX = 'cx';
       attribY = 'cy';
     }
-    if (['area', 'highlight', 'point', 'textbox', 'circle', 'fillcircle', 'emptycircle'].indexOf(type) > -1) {
+    if (['area', 'highlight', 'point', 'textbox', 'circle', 'fillcircle', 'emptycircle', 'image'].indexOf(type) > -1) {
       let modelStart = convertToSvgPoint([dragStartX, dragStartY], svg);
       let modelEnd = convertToSvgPoint([overlay.offsetLeft, overlay.offsetTop], svg);
       let modelDelta = {

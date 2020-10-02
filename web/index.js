@@ -286,6 +286,9 @@ render();
         case 'fillcircle':
           UI.disableCircle();
           break;
+        case 'image':
+          UI.disableImage();
+          break;
       }
     }
 
@@ -322,6 +325,9 @@ render();
       case 'emptycircle':
       case 'fillcircle':
         UI.enableCircle(type);
+        break;
+      case 'image':
+        UI.enableImage(type);
         break;
     }
   }

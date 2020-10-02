@@ -6,6 +6,7 @@ import renderRect from './renderRect';
 import renderText from './renderText';
 import renderCircle from './renderCircle';
 import renderArrow from './renderArrow';
+import renderImage from './renderImage';
 
 const isFirefox = /firefox/i.test(navigator.userAgent);
 
@@ -139,6 +140,9 @@ export function appendChild(svg, annotation, viewport) {
       break;
     case 'arrow':
       child = renderArrow(annotation);
+      break;
+    case 'image':
+      child = renderImage(annotation);
       break;
   }
 
