@@ -27,7 +27,7 @@ let _fontFamily;
 function handleDocumentMouseup(e) {
   let anchor = document.createElement('a');
 
-  if (input || !(svg = findSVGAtPoint(e.clientX, e.clientY))) {
+  if (input || !(svg = findSVGAtPoint(e.clientX, e.clientY)) || !e.target.classList.contains('annotationLayer')) {
     return;
   }
 
