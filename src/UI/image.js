@@ -135,6 +135,10 @@ function handleInputKeyup(e) {
  * Save a text annotation from input
  */
 function saveText() {
+  let imageButton = document.querySelector("button.image.active");
+  let imageButtonSignTYpe;
+  if (imageButton)
+    imageButtonSignTYpe = imageButton.getAttribute('data-sign-type');
   if (!svg) {
     return;
   }
@@ -148,7 +152,8 @@ function saveText() {
     y: pt[1],
     rotation: -viewport.rotation,
     src: imageSrc,
-    height: '80px'
+    height: '80px',
+    signType: imageButtonSignTYpe
   }
 
   PDFJSAnnotate.getStoreAdapter().addAnnotation(documentId, pageNumber, annotation)
