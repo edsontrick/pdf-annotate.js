@@ -47,7 +47,8 @@ function handleDocumentMouseup(e) {
   input.style.position = 'absolute';
   input.style.top = 0;
   input.style.left = 0;
-  input.style.width = '100%';
+  input.style.width = 'auto';
+  input.style.height = '100px';
   input.readOnly = 'true';
 
   button = document.createElement('button');
@@ -107,6 +108,7 @@ function handleDocumentMouseup(e) {
   divWrapper.appendChild(anchor);
   // document.body.appendChild(input);
   svg.parentNode.appendChild(divWrapper);
+  document.getElementById('pdf-annotate-image').parentElement.style.width = document.getElementById('pdf-annotate-image').offsetWidth + 'px';
   document.getElementById('pdf-annotate-image').dispatchEvent(new Event('change'));
   // input.focus();
 }
