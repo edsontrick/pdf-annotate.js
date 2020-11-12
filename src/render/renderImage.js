@@ -20,11 +20,12 @@ export default function renderImage(a) {
     y: y,
     transform: `rotate(${a.rotation}, ${x}, ${y})`,
     src: a.src,
-    height: a.height
+    width: a.width,
+    signType: a.signType
   });
 
   image.setAttributeNS('http://www.w3.org/1999/xlink','href',a.src);
-  image.setAttribute('style', 'height: ' + a.height);
+  image.setAttribute('style', 'width: ' + a.width);
 
   return image;
 }

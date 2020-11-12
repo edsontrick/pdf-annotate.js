@@ -47,8 +47,7 @@ function handleDocumentMouseup(e) {
   input.style.position = 'absolute';
   input.style.top = 0;
   input.style.left = 0;
-  input.style.width = 'auto';
-  input.style.height = '100px';
+  input.style.width = '250px';
   input.readOnly = 'true';
 
   button = document.createElement('button');
@@ -108,6 +107,11 @@ function handleDocumentMouseup(e) {
   divWrapper.appendChild(anchor);
   // document.body.appendChild(input);
   svg.parentNode.appendChild(divWrapper);
+
+  let imageButton = document.querySelector("button.image.active");
+  if (imageButton && imageButton.getAttribute('data-sign-type') == 'rubric')
+    document.getElementById('pdf-annotate-image').style.width = '150px';
+
   document.getElementById('pdf-annotate-image').parentElement.style.width = document.getElementById('pdf-annotate-image').offsetWidth + 'px';
   document.getElementById('pdf-annotate-image').dispatchEvent(new Event('change'));
   // input.focus();
@@ -154,9 +158,11 @@ function saveText() {
     y: pt[1],
     rotation: -viewport.rotation,
     src: imageSrc,
-    height: '80px',
+    width: '210px',
     signType: imageButtonSignTYpe
   }
+  if (annotation['signType'] == 'rubric')
+    annotation['width'] = '110px';
 
   PDFJSAnnotate.getStoreAdapter().addAnnotation(documentId, pageNumber, annotation)
     .then((annotation) => {
