@@ -10,6 +10,7 @@ import {
 let _enabled = false;
 let divWrapper;
 let input;
+let span;
 let button;
 let originY;
 let originX;
@@ -51,6 +52,14 @@ function handleDocumentMouseup(e) {
   input.style.fontFamily = _fontFamily;
   input.style.width = '100%';
   input.readOnly = 'true';
+
+  span = document.createElement('span');
+  span.setAttribute('id', 'pdf-annotate-text-span');
+  span.style.cssText = input.style.cssText;
+  span.style.fontFamily = '"Times New Roman", Times, serif';
+  span.style.fontSize = '16px';
+  span.style.lineHeight = '1.2em';
+  span.style.top = '26px';
 
   button = document.createElement('button');
   button.setAttribute('id', 'pdf-annotate-text-button');
@@ -102,15 +111,20 @@ function handleDocumentMouseup(e) {
     let positionX = originX - rect.left;
     divWrapper.style.top = `${positionY >= maxY ? maxY : positionY}px`;
     divWrapper.style.left = `${positionX >= maxX ? maxX : positionX}px`;
+    span.style.top = input.offsetHeight - 3 + 'px';
+    if (span.innerHTML.length == 0)
+      span.remove();
   });
 
   divWrapper.appendChild(input);
+  divWrapper.appendChild(span);
   divWrapper.appendChild(button);
   divWrapper.appendChild(anchor);
   // document.body.appendChild(input);
   svg.parentNode.appendChild(divWrapper);
-  // document.getElementById('pdf-annotate-text-input').value = 'Patrick Edson';
-  // document.getElementById('pdf-annotate-text-input').dispatchEvent(new Event('change'));
+  // input.value = 'Patrick Edson';
+  // span.innerHTML = 'Patrick Edson <br> Test';
+  // input.dispatchEvent(new Event('change'));
   // input.focus();
 }
 
@@ -140,6 +154,7 @@ function handleInputKeyup(e) {
 function saveText() {
   let textButton = document.querySelector("button.text.active");
   let textButtonSignTYpe;
+  let extraContent = span;
   if (textButton)
     textButtonSignTYpe = textButton.getAttribute('data-sign-type');
   if (input.value.trim().length > 0) {
@@ -157,16 +172,18 @@ function saveText() {
       parseInt(divWrapper.style.left), 
       parseInt(divWrapper.style.top) + height], svg, viewport);
     let annotation = {
-        type: 'textbox',
-        size: _textSize * scale,
-        color: _textColor,
-        content: input.value.trim(),
-        x: pt[0],
-        y: pt[1],
-        rotation: -viewport.rotation,
-        fontFamily: _fontFamily,
-        signType: textButtonSignTYpe
+      type: 'textbox',
+      size: _textSize * scale,
+      color: _textColor,
+      content: input.value.trim(),
+      x: pt[0],
+      y: pt[1],
+      rotation: -viewport.rotation,
+      fontFamily: _fontFamily,
+      signType: textButtonSignTYpe
     }
+    if (extraContent)
+      annotation['extraContent'] = extraContent.innerHTML;
 
     PDFJSAnnotate.getStoreAdapter().addAnnotation(documentId, pageNumber, annotation)
       .then((annotation) => {

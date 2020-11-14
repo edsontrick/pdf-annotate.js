@@ -266,13 +266,14 @@ function handleDocumentMouseup(e) {
         y: modelEnd[1] - modelStart[1]
       };
 
-      if (type === 'textbox') {
-        target = [target[0].firstChild];
+      if (type === 'textbox' || type === 'image') {
+        target = target[0].childNodes;
       }
 
       [...target].forEach((t, i) => {
         let modelX = parseInt(t.getAttribute(attribX), 10);
         let modelY = parseInt(t.getAttribute(attribY), 10);
+        var children = t.childNodes;
         if (modelDelta.y !== 0) {
           modelY = modelY + modelDelta.y;
           let viewY = modelY;
@@ -295,6 +296,10 @@ function handleDocumentMouseup(e) {
           if (type === 'point') {
             viewX = scaleUp(svg, { viewX }).viewX;
           }
+          children.forEach(function(item){
+            if (item.tagName == 'tspan')
+              item.setAttribute('x', modelX);
+          });
 
           t.setAttribute(attribX, viewX);
           if (annotation.rectangles  && i < annotation.rectangles.length) {

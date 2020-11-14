@@ -10,7 +10,9 @@ import {
 let _enabled = false;
 let divWrapper;
 let input;
+let span;
 let imageSrc;
+let complementaryInfo;
 let button;
 let originY;
 let originX;
@@ -38,6 +40,7 @@ function handleDocumentMouseup(e) {
   divWrapper.style.width = '210px';
 
   imageSrc = document.querySelector('button.image.active').dataset.imageSrc;
+  complementaryInfo = document.querySelector('button.image.active').dataset.extraInfo;
 
   input = document.createElement('img');
   input.setAttribute('id', 'pdf-annotate-image');
@@ -49,6 +52,14 @@ function handleDocumentMouseup(e) {
   input.style.left = 0;
   input.style.width = '250px';
   input.readOnly = 'true';
+
+  span = document.createElement('span');
+  span.setAttribute('id', 'pdf-annotate-text-span');
+  span.style.cssText = input.style.cssText;
+  span.style.fontFamily = '"Times New Roman", Times, serif';
+  span.style.fontSize = '16px';
+  span.style.lineHeight = '1.2em';
+  span.innerHTML = complementaryInfo;
 
   button = document.createElement('button');
   button.setAttribute('id', 'pdf-annotate-text-button');
@@ -100,9 +111,12 @@ function handleDocumentMouseup(e) {
     let positionX = originX - rect.left;
     divWrapper.style.top = `${positionY >= maxY ? maxY : positionY}px`;
     divWrapper.style.left = `${positionX >= maxX ? maxX : positionX}px`;
+    if (!complementaryInfo)
+      span.remove();
   });
 
   divWrapper.appendChild(input);
+  divWrapper.appendChild(span);
   divWrapper.appendChild(button);
   divWrapper.appendChild(anchor);
   // document.body.appendChild(input);
@@ -110,10 +124,11 @@ function handleDocumentMouseup(e) {
 
   let imageButton = document.querySelector("button.image.active");
   if (imageButton && imageButton.getAttribute('data-sign-type') == 'rubric')
-    document.getElementById('pdf-annotate-image').style.width = '150px';
+    input.style.width = '150px';
 
-  document.getElementById('pdf-annotate-image').parentElement.style.width = document.getElementById('pdf-annotate-image').offsetWidth + 'px';
-  document.getElementById('pdf-annotate-image').dispatchEvent(new Event('change'));
+  span.style.top = input.offsetHeight - 3 + 'px';
+  input.parentElement.style.width = input.offsetWidth + 'px';
+  input.dispatchEvent(new Event('change'));
   // input.focus();
 }
 
@@ -159,8 +174,11 @@ function saveText() {
     rotation: -viewport.rotation,
     src: imageSrc,
     width: '210px',
+    height: input.clientHeight - 20,
     signType: imageButtonSignTYpe
   }
+  if (complementaryInfo)
+    annotation['extraContent'] = complementaryInfo;
   if (annotation['signType'] == 'rubric')
     annotation['width'] = '110px';
 
