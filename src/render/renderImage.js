@@ -23,6 +23,7 @@ export default function renderImage(a) {
     transform: `rotate(${a.rotation}, ${x}, ${y})`,
     src: a.src,
     width: a.width,
+    height: a.height,
     signType: a.signType
   });
 

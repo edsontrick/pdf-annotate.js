@@ -37,7 +37,7 @@ function handleDocumentMouseup(e) {
 
   divWrapper = document.createElement('div');
   divWrapper.style.position = 'absolute';
-  divWrapper.style.width = '210px';
+  divWrapper.style.width = '319px';
 
   imageSrc = document.querySelector('button.image.active').dataset.imageSrc;
   complementaryInfo = document.querySelector('button.image.active').dataset.extraInfo;
@@ -50,7 +50,8 @@ function handleDocumentMouseup(e) {
   input.style.position = 'absolute';
   input.style.top = 0;
   input.style.left = 0;
-  input.style.width = '250px';
+  input.style.maxWidth = '100%';
+  input.style.maxHeight = '208px';
   input.readOnly = 'true';
 
   span = document.createElement('span');
@@ -124,7 +125,7 @@ function handleDocumentMouseup(e) {
 
   let imageButton = document.querySelector("button.image.active");
   if (imageButton && imageButton.getAttribute('data-sign-type') == 'rubric')
-    input.style.width = '150px';
+    input.style.maxHeight = '158px';
 
   span.style.top = input.offsetHeight - 3 + 'px';
   input.parentElement.style.width = input.offsetWidth + 'px';
@@ -173,14 +174,14 @@ function saveText() {
     y: pt[1],
     rotation: -viewport.rotation,
     src: imageSrc,
-    width: '210px',
+    width: input.clientWidth - 20,
     height: input.clientHeight - 20,
     signType: imageButtonSignTYpe
   }
   if (complementaryInfo)
     annotation['extraContent'] = complementaryInfo;
-  if (annotation['signType'] == 'rubric')
-    annotation['width'] = '110px';
+  // if (annotation['signType'] == 'rubric')
+    // annotation['width'] = '319px';
 
   PDFJSAnnotate.getStoreAdapter().addAnnotation(documentId, pageNumber, annotation)
     .then((annotation) => {
